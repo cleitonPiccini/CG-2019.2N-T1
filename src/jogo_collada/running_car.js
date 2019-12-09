@@ -302,8 +302,9 @@ function carMoveBack(){
 
 function carReset(){
 	avatar.position.set (0, 0, 0);
+	if (crash == 1) avatar.rotateZ(5);
 	crash = 0;
-	avatar.rotateZ(5);
+	
 
 	camera.position.set( 15, 10, - 15 );
 	pos_value = 0;
