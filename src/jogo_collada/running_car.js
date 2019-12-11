@@ -33,6 +33,7 @@ var container, stats, controls;
 var camera, scene, renderer, avatar;
 
 var ground;
+var pedras;
 			
 //Controle movimentos carro
 			
@@ -50,6 +51,7 @@ var crash = 0;
 
 init();
 animate();
+obstaculosInit();
 
 document.addEventListener("keydown", teclado);
 
@@ -69,6 +71,7 @@ function init() {
 	var gg = new THREE.PlaneBufferGeometry( 300, 160000 );
 	var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
 
+	ground = new THREE.Mesh( gg, gm );
 	ground = new THREE.Mesh( gg, gm );
 	ground.rotation.x = - Math.PI / 2;
 	ground.rotateZ(33.75);
@@ -174,8 +177,15 @@ function animate() {
 
 	requestAnimationFrame( animate );
 	crashControl();
+	
+	//obstaculos()
+	//obstaculos();
 	render();
 	stats.update();
+
+	/*"setInterval( function() {
+		console.log( 'Executa infinitamente, 1 vez por segundo.' );
+	  }, 1000 );*/
 
 }
 
@@ -223,7 +233,8 @@ function carMoveLeft(){
 function carMoveFront(){
 	console.log(avatar.position);
 	console.log(pos_value);
-	
+	//obstaculos();
+	setTimeout(obstaculosRand(), 10000);
 	//ground.translateY(0.01);
 	//ground.translateX(0.01);
 	//avatar.translateX(-0.01);
@@ -243,4 +254,42 @@ function carReset(){
 
 	camera.position.set( 15, 10, - 15 );
 	pos_value = 0;
+}
+
+function obstaculosInit(){
+
+	var gt = new THREE.TextureLoader().load( "../../libs/examples/textures/brick_diffuse.jpg" );
+	var gg = new THREE.PlaneBufferGeometry( 3, 1 );
+	var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
+
+	var xPos = Math.floor(Math.random() * 10 + 1)
+
+	pedras = new THREE.Mesh( gg, gm );
+	pedras = new THREE.Mesh( gg, gm );
+	pedras.position.set(0,25,1);
+	pedras.rotation.x = - Math.PI / 2;
+	//pedras.rotateZ(33.75);
+	//pedras.translateX(-2);
+	pedras.material.map.repeat.set( 1, 1 );
+	pedras.material.map.wrapS = THREE.RepeatWrapping;
+	pedras.material.map.wrapT = THREE.RepeatWrapping;
+	
+	pedras.receiveShadow = true;
+	scene.add( pedras );
+
+	
+	/*var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+		map:THREE.ImageUtils.loadTexture("../../libs/examples/models/collada/pista_3.png")
+	});
+	img.map.needsUpdate = true; //ADDED
+	
+	// plane
+	var plane = new THREE.Mesh(new THREE.PlaneGeometry(200, 200),img);
+	plane.overdraw = true;
+	scene.add(plane);*/
+}
+
+function obstaculosRand(){
+	var xPos = Math.floor(Math.random() * 10 + 1)
+	pedras.position.set(xPos,0,1);
 }
