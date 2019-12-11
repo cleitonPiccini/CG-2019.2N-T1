@@ -1,12 +1,21 @@
 //Código desenvolvido para THREE.js WebGL e modelos 3D collada.
 //Base utilizada = https://threejs.org/examples/?q=coll#webgl_loader_collada_skinning
 
-import * as THREE from '../../libs/build/three.module.js';
+/*import * as THREE from '../../libs/build/three.module.js';
 
 import Stats from '../../libs/examples/jsm/libs/stats.module.js';
 
 import { ColladaLoader } from '../../libs/examples/jsm/loaders/ColladaLoader.js';
 import { OrbitControls } from '../../libs/examples/jsm/controls/OrbitControls.js';
+*/
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/build/three.module.js';
+import Stats from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/libs/stats.module.js';
+
+import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/controls/OrbitControls.js';
+import { ColladaLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/loaders/ColladaLoader.js';
+
+//import { GUI } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/libs/dat.gui.module.js';
+//import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/loaders/GLTFLoader.js';
 
 
 ////////////////////
