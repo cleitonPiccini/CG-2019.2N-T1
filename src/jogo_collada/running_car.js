@@ -8,50 +8,32 @@ import Stats from '../../libs/examples/jsm/libs/stats.module.js';
 import { ColladaLoader } from '../../libs/examples/jsm/loaders/ColladaLoader.js';
 import { OrbitControls } from '../../libs/examples/jsm/controls/OrbitControls.js';
 
-/*import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/build/three.module.js';
-import Stats from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/libs/stats.module.js';
-
-import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/controls/OrbitControls.js';
-import { ColladaLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/loaders/ColladaLoader.js';
-*/
-//import { GUI } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/libs/dat.gui.module.js';
-//import { GLTFLoader } from 'https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/loaders/GLTFLoader.js';
-
-
-////////////////////
-
-
-//import * as THREE from '../build/three.module.js';
-
-/*import Stats from './jsm/libs/stats.module.js';
-
-import { ColladaLoader } from './jsm/loaders/ColladaLoader.js';
-import { OrbitControls } from './jsm/controls/OrbitControls.js';*/
-
-
 var container, stats, controls;
-var camera, scene, renderer, avatar;
+var scene, renderer, avatar;
 
+//Camera
+var camera, camera_x = 0, camera_y = 15, camera_z = -20; 
+
+//Imagens
 var ground;
 var pedras;
 			
 //Controle movimentos carro
-			
-//var limite_r =  new THREE.Vector3( -2.0, 0, 0 );
-//var limite_l =  new THREE.Vector3( 9.0, 0, 0 );
 var pos_value = 0.0;
-var limite_r = -2.3;
-var limite_l = 5.55;
-var l_crash = 9.0;
-var r_crash = -6.5;
+var limite_r = -4.55;
+var limite_l = 5.25;
+var l_crash = 7.0;
+var r_crash = -6.0;
 var speed_max = -0.6;
-var speed_normal = -0.8;
-var speed_min = -0.3;
+var speed_normal = 0.8;
+var speed_min = 0.3;
 var crash = 0;
+var max_rand_obstaculo = 15.0, timeObstaculo = 4500;
 
 init();
 animate();
-obstaculosInit();
+//obstaculosInit();
+geraObstaculo();
 
 document.addEventListener("keydown", teclado);
 
@@ -60,22 +42,20 @@ function init() {
 	container = document.getElementById( 'container' );
 
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 4000 );
-	camera.position.set( 15, 10, - 15 );
-
+	//camera.position.set( 15, 10, - 15 );
+	camera.position.set( camera_x, camera_y, camera_z );
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xffffff );
 	//scene.background = new THREE.TextureLoader().load( "../../libs/examples/models/collada/uffs.png" );
 	scene.fog = new THREE.Fog( 0xffffff, 1000, 4000 );
 
-	var gt = new THREE.TextureLoader().load( "../../libs/examples/models/collada/pista_3.png" );
-	var gg = new THREE.PlaneBufferGeometry( 300, 160000 );
-	var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
+	var gt_1 = new THREE.TextureLoader().load( "../../libs/examples/models/collada/pista_3.png" );
+	var gg_1 = new THREE.PlaneBufferGeometry( 400, 160000 );
+	var gm_1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt_1 } );
 
-	ground = new THREE.Mesh( gg, gm );
-	ground = new THREE.Mesh( gg, gm );
+	ground = new THREE.Mesh( gg_1, gm_1 );
+	ground = new THREE.Mesh( gg_1, gm_1 );
 	ground.rotation.x = - Math.PI / 2;
-	ground.rotateZ(33.75);
-	ground.translateX(-2);
 	ground.material.map.repeat.set( 5, 100 );
 	ground.material.map.wrapS = THREE.RepeatWrapping;
 	ground.material.map.wrapT = THREE.RepeatWrapping;
@@ -83,29 +63,37 @@ function init() {
 	// note that because the ground does not cast a shadow, .castShadow is left false
 	ground.receiveShadow = true;
 	scene.add( ground );
+
+	var gt_2 = new THREE.TextureLoader().load( "../../libs/examples/models/collada/buraco.png" );
+	var gg_2 = new THREE.PlaneBufferGeometry( 3, 1 );
+	var gm_2 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt_2 } );
+
+	pedras = new THREE.Mesh( gg_2, gm_2 );
+	pedras = new THREE.Mesh( gg_2, gm_2 );
+	pedras.position.set(0,0.3,4);
+	pedras.rotation.x = - Math.PI / 2;
+	pedras.material.map.repeat.set( 1, 1 );
+	pedras.material.map.wrapS = THREE.RepeatWrapping;
+	pedras.material.map.wrapT = THREE.RepeatWrapping;
+	
+	pedras.receiveShadow = false;
+	scene.add( pedras );
 	
 	// collada
 	var loader = new ColladaLoader();
 	loader.load( '../../libs/examples/models/collada/mazda_2/mazda.dae', function ( collada ) {
 
 		avatar = collada.scene;
-		avatar.rotateZ(-0.8);
-
 		avatar.traverse( function ( node ) {
-
 			if ( node.isSkinnedMesh ) {
-
 				node.frustumCulled = false;
-
 			}
-
 		} );
 		scene.add( avatar );
-
 	} );
 
 	var light = new THREE.DirectionalLight( 0xffffff, 2.25 );
-	light.position.set( 200, 450, 500 );
+	light.position.set( 500, 250, -900 );
 
 	light.castShadow = true;
 
@@ -129,14 +117,6 @@ function init() {
 	controls = new OrbitControls( camera, renderer.domElement );
 	controls.target.set( 0, 2, 0 );
 	controls.update();
-
-	/*controls = new OrbitControls( camera, renderer.domElement );
-	controls.screenSpacePanning = true;
-	controls.minDistance = 2;
-	controls.maxDistance = 60;
-	controls.target.set( 0, 2, 0 );
-	controls.update();*/
-
 	//
 
 	stats = new Stats();
@@ -164,8 +144,10 @@ function crashControl(){
 		crash = 1;		
 	} else if ((pos_value < limite_r || pos_value > limite_l) && crash == 0 ){
 		ground.translateY(speed_min);
+		pedras.translateY(speed_min);
 	} else if ( crash == 0 ){
 		ground.translateY(speed_normal);
+		pedras.translateY(speed_normal);
 	}
 }
 
@@ -177,16 +159,16 @@ function animate() {
 
 	requestAnimationFrame( animate );
 	crashControl();
-	
-	//obstaculos()
-	//obstaculos();
 	render();
 	stats.update();
+}
 
-	/*"setInterval( function() {
-		console.log( 'Executa infinitamente, 1 vez por segundo.' );
-	  }, 1000 );*/
+function geraObstaculo(){
 
+	var loop = setInterval(function(){ 
+	  geraObstaculo();
+	}, timeObstaculo);
+	obstaculosRand(max_rand_obstaculo);
 }
 
 function render() {
@@ -231,14 +213,12 @@ function carMoveLeft(){
 }
 
 function carMoveFront(){
-	console.log(avatar.position);
-	console.log(pos_value);
-	//obstaculos();
-	setTimeout(obstaculosRand(), 10000);
-	//ground.translateY(0.01);
-	//ground.translateX(0.01);
-	//avatar.translateX(-0.01);
-	//camera.rotateZ(0.02);
+	//console.log(avatar.position);
+	console.log(pedras);
+	console.log(ground);
+
+	//setInterval(obstaculosRand(), 1000000);
+
 }
 
 function carMoveBack(){
@@ -252,44 +232,33 @@ function carReset(){
 	crash = 0;
 	
 
-	camera.position.set( 15, 10, - 15 );
+	camera.position.set( camera_x, camera_y, camera_z );
 	pos_value = 0;
 }
 
 function obstaculosInit(){
 
-	var gt = new THREE.TextureLoader().load( "../../libs/examples/textures/brick_diffuse.jpg" );
+	var gt = new THREE.TextureLoader().load( "../../libs/examples/models/collada/buraco.png" );
 	var gg = new THREE.PlaneBufferGeometry( 3, 1 );
 	var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt } );
 
-	var xPos = Math.floor(Math.random() * 10 + 1)
-
 	pedras = new THREE.Mesh( gg, gm );
 	pedras = new THREE.Mesh( gg, gm );
-	pedras.position.set(0,25,1);
+	pedras.position.set(0,0.3,2);
 	pedras.rotation.x = - Math.PI / 2;
-	//pedras.rotateZ(33.75);
-	//pedras.translateX(-2);
 	pedras.material.map.repeat.set( 1, 1 );
 	pedras.material.map.wrapS = THREE.RepeatWrapping;
 	pedras.material.map.wrapT = THREE.RepeatWrapping;
 	
-	pedras.receiveShadow = true;
+	pedras.receiveShadow = false;
 	scene.add( pedras );
-
-	
-	/*var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
-		map:THREE.ImageUtils.loadTexture("../../libs/examples/models/collada/pista_3.png")
-	});
-	img.map.needsUpdate = true; //ADDED
-	
-	// plane
-	var plane = new THREE.Mesh(new THREE.PlaneGeometry(200, 200),img);
-	plane.overdraw = true;
-	scene.add(plane);*/
 }
 
-function obstaculosRand(){
-	var xPos = Math.floor(Math.random() * 10 + 1)
-	pedras.position.set(xPos,0,1);
+//setTimeout(obstaculosRand(), 10000);
+//setInterval(obstaculosRand(), 10000);
+
+function obstaculosRand(max){
+	var xPos = Math.floor(Math.random() * max + 1);
+	xPos = xPos - (max / 2.0);
+	pedras.position.set(xPos,0.03,40);
 }
