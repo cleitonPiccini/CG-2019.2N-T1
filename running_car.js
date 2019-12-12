@@ -93,7 +93,7 @@ function init() {
 
 	//Iluminação.
 	var light = new THREE.DirectionalLight( 0xffffff, 2.25 );
-	light.position.set( 500, 250, -900 );
+	light.position.set(500, 350, 80);
 	light.castShadow = true;
 	light.shadow.mapSize.width = 1024;
 	light.shadow.mapSize.height = 512;
