@@ -19,10 +19,10 @@ var ground;
 
 //Obstaculo
 var pedras;
-var tam_obstaculo = 2.5, pos_init_z_obstaculo = 40, pos_init_x_obstaculo = 5;
-var crash = 0, pedra_posit = pos_init_x_obstaculo, eixo_z_virtual = 40;
+var tam_obstaculo = 2.5, pos_init_z_obstaculo = 100.0, pos_init_x_obstaculo = 5;
+var crash = 0, pedra_posit = pos_init_x_obstaculo, eixo_z_virtual = pos_init_z_obstaculo;
 var max_rand_obstaculo = 13.0; // Tamanho base para gerar os números randomicos para o eixo x do obstaculo.
-var timeObstaculo = 4000; // Tempo para surgir um novo obstaculo.
+var timeObstaculo = 2500; // Tempo para surgir um novo obstaculo.
 
 //Controle movimentos carro
 var pos_value = 0.0; //Posição do eixo x do carro. (mesma função do eixo_z_virtual).
@@ -31,8 +31,9 @@ var limite_l = 5.25; //Limite para velocidade plena do lado esquerdo da pista
 var l_crash = 7.0; //Limite para do lado esquerdo da pista
 var r_crash = -6.0; //Limite para do lado direito da pista
 var speed_max = -0.6;
-var speed_normal = 1.2;
+var speed_normal = 0.8;
 var speed_min = 0.3;
+var translado_x = 4.0;
 
 
 init();
@@ -150,11 +151,11 @@ function crashControl(){
 		crash = 1;		
 	} else if ((pos_value < limite_r || pos_value > limite_l) && crash == 0 ){
 		ground.translateY(speed_min);
-		pedras.translateY(speed_min);
+		pedras.translateZ(speed_min);
 		eixo_z_virtual = eixo_z_virtual - speed_min;
 	} else if ( crash == 0 ){
 		ground.translateY(speed_normal);
-		pedras.translateY(speed_normal);
+		pedras.translateZ(speed_normal);
 		eixo_z_virtual = eixo_z_virtual - speed_normal;
 	}
 }
@@ -203,16 +204,16 @@ function teclado(tecla){
 
 function carMoveRight(){
 
-	avatar.translateX(-0.15);
-	camera.translateX(0.15);
-	pos_value -= 0.15;
+	avatar.translateX(-translado_x);
+	camera.translateX(translado_x);
+	pos_value -= translado_x;
 }
 
 function carMoveLeft(){
 
-	avatar.translateX(0.15);
-	camera.translateX(-0.15);
-	pos_value += 0.15;
+	avatar.translateX(translado_x);
+	camera.translateX(-translado_x);
+	pos_value += translado_x;
 }
 
 function carMoveFront(){
@@ -233,7 +234,7 @@ function carReset(){
 	camera.position.set( camera_x, camera_y, camera_z );
 	pos_value = 0;
 	pedras.position.set(pos_init_x_obstaculo, 0.3, pos_init_z_obstaculo);
-	eixo_z_virtual = 40;
+	eixo_z_virtual = pos_init_z_obstaculo;
 	pedra_posit = pos_init_x_obstaculo;
 
 }

@@ -19,10 +19,10 @@ var ground;
 
 //Obstaculo
 var pedras;
-var tam_obstaculo = 2.5, pos_init_z_obstaculo = 40, pos_init_x_obstaculo = 5;
-var crash = 0, pedra_posit = pos_init_x_obstaculo, eixo_z_virtual = 40;
+var tam_obstaculo = 2.5, pos_init_z_obstaculo = 100, pos_init_x_obstaculo = 5;
+var crash = 0, pedra_posit = pos_init_x_obstaculo, eixo_z_virtual = pos_init_z_obstaculo;
 var max_rand_obstaculo = 13.0; // Tamanho base para gerar os números randomicos para o eixo x do obstaculo.
-var timeObstaculo = 4000; // Tempo para surgir um novo obstaculo.
+var timeObstaculo = 3000; // Tempo para surgir um novo obstaculo.
 
 //Controle movimentos carro
 var pos_value = 0.0; //Posição do eixo x do carro. (mesma função do eixo_z_virtual).
@@ -33,6 +33,7 @@ var r_crash = -6.0; //Limite para do lado direito da pista
 var speed_max = -0.6;
 var speed_normal = 1.2;
 var speed_min = 0.3;
+var translada_x = 0.3;
 
 
 init();
@@ -203,16 +204,16 @@ function teclado(tecla){
 
 function carMoveRight(){
 
-	avatar.translateX(-0.15);
-	camera.translateX(0.15);
-	pos_value -= 0.15;
+	avatar.translateX(-translada_x);
+	camera.translateX(translada_x);
+	pos_value -= translada_x;
 }
 
 function carMoveLeft(){
 
-	avatar.translateX(0.15);
-	camera.translateX(-0.15);
-	pos_value += 0.15;
+	avatar.translateX(translada_x);
+	camera.translateX(-translada_x);
+	pos_value += translada_x;
 }
 
 function carMoveFront(){
